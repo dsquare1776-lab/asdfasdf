@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Comparison Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #001a33 0%, #000d1a 100%);
+            color: #00d4ff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            background: rgba(0, 20, 40, 0.9);
+            border: 3px solid #0096ff;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1600px;
+            width: 100%;
+            box-shadow: 0 0 60px rgba(0, 150, 255, 0.5);
+        }
+        
+        h1 {
+            color: #00d4ff;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+            text-shadow: 0 0 20px #00d4ff;
+        }
+        
+        .lightning {
+            color: #ffeb3b;
+            text-shadow: 0 0 15px #ffeb3b;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            table-layout: fixed;
+        }
+        
+        th {
+            background: rgba(0, 150, 255, 0.3);
+            color: #00d4ff;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #0096ff;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 15px;
+            border: 2px solid #0096ff;
+            text-align: center;
+        }
+        
+        .year-cell {
+            background: rgba(0, 150, 255, 0.1);
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 18px;
+            width: 100px;
+        }
+        
+        .red-column {
+            border: 3px solid #ff3333 !important;
+            background: rgba(255, 51, 51, 0.05);
+        }
+        
+        .green-column {
+            border: 3px solid #33ff33 !important;
+            background: rgba(51, 255, 51, 0.05);
+        }
+        
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #00d4ff;
+            color: #00ff00;
+            padding: 12px 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            border-radius: 5px;
+            text-align: right;
+            min-width: 150px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+        }
+        
+        input:disabled {
+            background: rgba(0, 0, 0, 0.3);
+            color: #00d4ff;
+            border-color: #0096ff;
+            cursor: not-allowed;
+        }
+        
+        .control-section {
+            background: rgba(255, 51, 51, 0.1);
+            border: 3px solid #ff3333;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .control-section label {
+            color: #ff6666;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff3333;
+        }
+        
+        select {
+            background: rgba(0, 0, 0, 0.6);
+            border: 3px solid #ff3333;
+            color: #ff6666;
+            padding: 12px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            min-width: 150px;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #ff6666;
+            box-shadow: 0 0 15px #ff3333;
+        }
+        
+        .instructions {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            color: #00ff00;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #00ff00;
+        }
+        
+        .instructions p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1><span class="lightning">⚡</span> PRICE COMPARISON TABLE <span class="lightning">⚡</span></h1>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>YEAR</th>
+                    <th class="red-column">WITHOUT BATTERY OR SOLAR</th>
+                    <th class="green-column">NEW PRICE 0.00%</th>
+                    <th class="green-column">1.99% ESCALATOR</th>
+                    <th class="green-column">2.99% ESCALATOR</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="year-cell">1</td>
+                    <td class="red-column"><input type="number" id="A1" step="0.01" placeholder="Enter amount" oninput="calculate()"></td>
+                    <td class="green-column"><input type="number" id="B1" step="0.01" placeholder="Enter amount" oninput="calculate()"></td>
+                    <td class="green-column"><input type="number" id="C1" step="0.01" placeholder="Enter amount" oninput="calculate()"></td>
+                    <td class="green-column"><input type="number" id="D1" step="0.01" placeholder="Enter amount" oninput="calculate()"></td>
+                </tr>
+                <tr>
+                    <td class="year-cell">2</td>
+                    <td class="red-column"><input type="text" id="A2" disabled></td>
+                    <td class="green-column"><input type="text" id="B2" disabled></td>
+                    <td class="green-column"><input type="text" id="C2" disabled></td>
+                    <td class="green-column"><input type="text" id="D2" disabled></td>
+                </tr>
+                <tr>
+                    <td class="year-cell">3</td>
+                    <td class="red-column"><input type="text" id="A3" disabled></td>
+                    <td class="green-column"><input type="text" id="B3" disabled></td>
+                    <td class="green-column"><input type="text" id="C3" disabled></td>
+                    <td class="green-column"><input type="text" id="D3" disabled></td>
+                </tr>
+                <tr>
+                    <td class="year-cell">4</td>
+                    <td class="red-column"><input type="text" id="A4" disabled></td>
+                    <td class="green-column"><input type="text" id="B4" disabled></td>
+                    <td class="green-column"><input type="text" id="C4" disabled></td>
+                    <td class="green-column"><input type="text" id="D4" disabled></td>
+                </tr>
+                <tr>
+                    <td class="year-cell">5</td>
+                    <td class="red-column"><input type="text" id="A5" disabled></td>
+                    <td class="green-column"><input type="text" id="B5" disabled></td>
+                    <td class="green-column"><input type="text" id="C5" disabled></td>
+                    <td class="green-column"><input type="text" id="D5" disabled></td>
+                </tr>
+                <tr>
+                    <td class="year-cell">6</td>
+                    <td class="red-column"><input type="text" id="A6" disabled></td>
+                    <td class="green-column"><input type="text" id="B6" disabled></td>
+                    <td class="green-column"><input type="text" id="C6" disabled></td>
+                    <td class="green-column"><input type="text" id="D6" disabled></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="control-section">
+            <label for="increaseRate">INCREASE:</label>
+            <select id="increaseRate" onchange="calculate()">
+                <option value="0.08">8%</option>
+                <option value="0.10" selected>10%</option>
+                <option value="0.12">12%</option>
+                <option value="0.14">14%</option>
+            </select>
+        </div>
+        
+        <div class="instructions">
+            <h3>📝 INSTRUCTIONS:</h3>
+            <p><strong>Manual Input:</strong> Enter values in Year 1 row only (A1, B1, C1, D1)</p>
+            <p><strong>Red Column (A):</strong> Select your increase rate (8%, 10%, 12%, or 14%) - applies to Years 2-6</p>
+            <p><strong>Green Column B:</strong> Stays the same for all 6 years (0.00% increase)</p>
+            <p><strong>Green Column C:</strong> Each year increases by 1.99%</p>
+            <p><strong>Green Column D:</strong> Each year increases by 2.99%</p>
+            <p><strong>All values automatically rounded to nearest cent.</strong></p>
+        </div>
+    </div>
+
+    <script>
+        function roundToCent(value) {
+            return Math.round(value * 100) / 100;
+        }
+        
+        function formatCurrency(value) {
+            if (isNaN(value) || value === null || value === '') return '';
+            return '$' + value.toFixed(2);
+        }
+        
+        function calculate() {
+            // Get input values
+            const A1 = parseFloat(document.getElementById('A1').value) || 0;
+            const B1 = parseFloat(document.getElementById('B1').value) || 0;
+            const C1 = parseFloat(document.getElementById('C1').value) || 0;
+            const D1 = parseFloat(document.getElementById('D1').value) || 0;
+            
+            // Get selected increase rate
+            const increaseRate = parseFloat(document.getElementById('increaseRate').value);
+            const multiplier = 1 + increaseRate;
+            
+            // Calculate Column A (variable increase based on dropdown)
+            let A = [A1];
+            for (let i = 1; i < 6; i++) {
+                A[i] = roundToCent(A[i-1] * multiplier);
+            }
+            
+            // Calculate Column B (stays the same)
+            let B = [B1, B1, B1, B1, B1, B1];
+            
+            // Calculate Column C (1.99% increase each year)
+            let C = [C1];
+            for (let i = 1; i < 6; i++) {
+                C[i] = roundToCent(C[i-1] * 1.0199);
+            }
+            
+            // Calculate Column D (2.99% increase each year)
+            let D = [D1];
+            for (let i = 1; i < 6; i++) {
+                D[i] = roundToCent(D[i-1] * 1.0299);
+            }
+            
+            // Update all cells
+            for (let i = 2; i <= 6; i++) {
+                document.getElementById('A' + i).value = formatCurrency(A[i-1]);
+                document.getElementById('B' + i).value = formatCurrency(B[i-1]);
+                document.getElementById('C' + i).value = formatCurrency(C[i-1]);
+                document.getElementById('D' + i).value = formatCurrency(D[i-1]);
+            }
+        }
+        
+        // Initialize empty
+        calculate();
+    </script>
+
+</body>
+</html>
