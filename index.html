@@ -90,26 +90,38 @@
             width: 100%;
             background: rgba(0, 0, 0, 0.6);
             border: 2px solid #00d4ff;
-            color: #00ff00;
-            padding: 12px 15px;
+            color: #ffffff !important;
+            padding: 14px 15px;
             font-family: 'Courier New', monospace;
-            font-size: 18px;
+            font-size: 21px; /* ~12–15% larger than before */
+            font-weight: bold;
             border-radius: 5px;
             text-align: right;
             min-width: 150px;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+            transition: all 0.3s;
         }
         
         input:focus {
             outline: none;
             border-color: #00ff00;
-            box-shadow: 0 0 15px #00ff00;
+            box-shadow: 0 0 20px #00ff00;
         }
         
         input:disabled {
-            background: rgba(0, 0, 0, 0.3);
-            color: #00d4ff;
+            background: rgba(0, 0, 0, 0.4);
+            color: #ffffff !important;
             border-color: #0096ff;
             cursor: not-allowed;
+        }
+        
+        /* Neon glow for all calculated values */
+        input:not(:focus) {
+            color: #ffffff !important;
+            text-shadow: 
+                0 0 8px #00d4ff,
+                0 0 16px #00d4ff,
+                0 0 24px #0099ff;
         }
         
         .control-section {
@@ -140,7 +152,6 @@
             font-size: 18px;
             border-radius: 5px;
             cursor: pointer;
-            min-width: 150px;
         }
         
         select:focus {
@@ -162,17 +173,11 @@
             margin-bottom: 10px;
             color: #00ff00;
         }
-        
-        .instructions p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
-    
     <div class="container">
-        <h1><span class="lightning">⚡</span> PRICE COMPARISON TABLE <span class="lightning">⚡</span></h1>
+        <h1>PRICE COMPARISON TABLE</h1>
         
         <table>
             <thead>
@@ -187,10 +192,10 @@
             <tbody>
                 <tr>
                     <td class="year-cell">1</td>
-                    <td class="red-column"><input type="number" id="A1" step="0.01" placeholder="Enter amount" oninput="calculate()"></td>
-                    <td class="green-column"><input type="number" id="B1" step="0.01" placeholder="Enter amount" oninput="calculate()"></td>
-                    <td class="green-column"><input type="number" id="C1" step="0.01" placeholder="Enter amount" oninput="calculate()"></td>
-                    <td class="green-column"><input type="number" id="D1" step="0.01" placeholder="Enter amount" oninput="calculate()"></td>
+                    <td class="red-column"><input type="text" id="A1" placeholder="Enter amount" oninput="calculate()"></td>
+                    <td class="green-column"><input type="text" id="B1" placeholder="Enter amount" oninput="calculate()"></td>
+                    <td class="green-column"><input type="text" id="C1" placeholder="Enter amount" oninput="calculate()"></td>
+                    <td class="green-column"><input type="text" id="D1" placeholder="Enter amount" oninput="calculate()"></td>
                 </tr>
                 <tr>
                     <td class="year-cell">2</td>
@@ -241,13 +246,13 @@
         </div>
         
         <div class="instructions">
-            <h3>📝 INSTRUCTIONS:</h3>
-            <p><strong>Manual Input:</strong> Enter values in Year 1 row only (A1, B1, C1, D1)</p>
-            <p><strong>Red Column (A):</strong> Select your increase rate (8%, 10%, 12%, or 14%) - applies to Years 2-6</p>
-            <p><strong>Green Column B:</strong> Stays the same for all 6 years (0.00% increase)</p>
-            <p><strong>Green Column C:</strong> Each year increases by 1.99%</p>
-            <p><strong>Green Column D:</strong> Each year increases by 2.99%</p>
-            <p><strong>All values automatically rounded to nearest cent.</strong></p>
+            <h3>INSTRUCTIONS:</h3>
+            <p><strong>Manual Input:</strong> Enter values in Year 1 row only</p>
+            <p><strong>Red Column (A):</strong> Increases by selected rate (8–14%)</p>
+            <p><strong>Green B:</strong> 0.00% – stays flat</p>
+            <p><strong>Green C:</strong> +1.99% per year</p>
+            <p><strong>Green D:</strong> +2.99% per year</p>
+            <p><strong>All values rounded to nearest cent and shown with $</strong></p>
         </div>
     </div>
 
@@ -261,50 +266,45 @@
             return '$' + value.toFixed(2);
         }
         
+        function parseCurrency(str) {
+            return parseFloat(str.replace(/[^0-9.-]/g, '')) || 0;
+        }
+        
         function calculate() {
-            // Get input values
-            const A1 = parseFloat(document.getElementById('A1').value) || 0;
-            const B1 = parseFloat(document.getElementById('B1').value) || 0;
-            const C1 = parseFloat(document.getElementById('C1').value) || 0;
-            const D1 = parseFloat(document.getElementById('D1').value) || 0;
-            
-            // Get selected increase rate
-            const increaseRate = parseFloat(document.getElementById('increaseRate').value);
-            const multiplier = 1 + increaseRate;
-            
-            // Calculate Column A (variable increase based on dropdown)
+            const A1 = parseCurrency(document.getElementById('A1').value);
+            const B1 = parseCurrency(document.getElementById('B1').value);
+            const C1 = parseCurrency(document.getElementById('C1').value);
+            const D1 = parseCurrency(document.getElementById('D1').value);
+
+            const rate = parseFloat(document.getElementById('increaseRate').value);
+            const multiplier = 1 + rate;
+
+            // Column A – selected escalator
             let A = [A1];
-            for (let i = 1; i < 6; i++) {
-                A[i] = roundToCent(A[i-1] * multiplier);
-            }
-            
-            // Calculate Column B (stays the same)
-            let B = [B1, B1, B1, B1, B1, B1];
-            
-            // Calculate Column C (1.99% increase each year)
+            for (let i = 1; i < 6; i++) A[i] = roundToCent(A[i-1] * multiplier);
+
+            // Column B – flat
+            let B = new Array(6).fill(B1);
+
+            // Column C – 1.99%
             let C = [C1];
-            for (let i = 1; i < 6; i++) {
-                C[i] = roundToCent(C[i-1] * 1.0199);
-            }
-            
-            // Calculate Column D (2.99% increase each year)
+            for (let i = 1; i < 6; i++) C[i] = roundToCent(C[i-1] * 1.0199);
+
+            // Column D – 2.99%
             let D = [D1];
-            for (let i = 1; i < 6; i++) {
-                D[i] = roundToCent(D[i-1] * 1.0299);
-            }
-            
-            // Update all cells
-            for (let i = 2; i <= 6; i++) {
+            for (let i = 1; i < 6; i++) D[i] = roundToCent(D[i-1] * 1.0299);
+
+            // Write all 6 years
+            for (let i = 1; i <= 6; i++) {
                 document.getElementById('A' + i).value = formatCurrency(A[i-1]);
                 document.getElementById('B' + i).value = formatCurrency(B[i-1]);
                 document.getElementById('C' + i).value = formatCurrency(C[i-1]);
                 document.getElementById('D' + i).value = formatCurrency(D[i-1]);
             }
         }
-        
-        // Initialize empty
-        calculate();
-    </script>
 
+        // Run once when page loads
+        window.onload = calculate;
+    </script>
 </body>
 </html>
